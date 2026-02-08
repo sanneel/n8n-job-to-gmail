@@ -1,0 +1,172 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "31800a83-b1c1-46a7-a897-b9fc52bfa731",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://remoteok.com/api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6e5a018c-6a95-4c1a-8655-102325ea2e23",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4b8a88f8-082b-4292-a302-e9c4912d6094",
+              "leftValue": "={{$json[\"position\"].toLowerCase()}}\n",
+              "rightValue": "=junior",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "f4fd8719-c71a-489a-90f2-7a918e9a97ee",
+              "leftValue": "={{ ($json[\"tags\"] || []).join(\" \").toLowerCase() }}",
+              "rightValue": "(part[- ]?time|junior)",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "98e820b7-9aaa-4300-ae4d-10033b28d71a",
+              "leftValue": "={{$json[\"position\"].toLowerCase()}}",
+              "rightValue": "developer",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "aabe49d4-065c-468b-ace3-e820cf3fda45",
+              "leftValue": "={{$json[\"position\"].toLowerCase()}}",
+              "rightValue": "CRM",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        0
+      ],
+      "id": "7b965df8-e5e9-440f-a369-f2899d53f430",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "sendTo": "sandrosiradze@gmail.com",
+        "subject": "=N8n",
+        "emailType": "text",
+        "message": "=New job found:\n\nLocation: {{$json[\"location\"]}}\nCompany: {{$json[\"company\"]}}\nLink: {{$json[\"url\"]}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        0
+      ],
+      "id": "3a8d1552-b688-4bdf-9c56-df971e4dc68d",
+      "name": "Send a message",
+      "webhookId": "e919e64f-52f9-49f5-b192-eccc7379a80c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tfI9QUmkC5KHKDIp",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "aad56333-6cd1-4691-b2ff-1dd8091fe665",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "16d0ec4523f8b27d245343aaa986ce4b4a3039a55b5d91695b10b807499c4081"
+  },
+  "id": "QE5GRFe70UbM86H9eXzTM",
+  "tags": []
+}
